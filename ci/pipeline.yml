@@ -221,7 +221,7 @@ resources:
   type: git
   source:
     uri: git@github.com:cycloidio/terraform-resource.git
-    branch: plan
+    branch: feat_plan
     private_key: {{git_private_key}}
 - name: terraform-dev-image
   type: docker-image
