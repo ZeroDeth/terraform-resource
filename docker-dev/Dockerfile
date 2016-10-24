@@ -1,7 +1,8 @@
 FROM golang:1.6-alpine
 
-RUN apk update && \
-   apk add ca-certificates git bash
+RUN apk update \
+    && apk add ca-certificates git bash wget openssl \
+    && update-ca-certificates
 
 # install go deps
 RUN go get github.com/onsi/ginkgo/ginkgo
