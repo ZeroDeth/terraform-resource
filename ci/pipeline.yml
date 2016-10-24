@@ -1,26 +1,4 @@
 jobs:
-  - name: auto-bump-terraform
-    plan:
-      - get: terraform-github-release
-        trigger: true
-      - get: resource-src
-      - task: bump-terraform-cli
-        file: resource-src/ci/tasks/bump-terraform-cli.yml
-      - task: git-commit
-        file: resource-src/ci/tasks/git-commit.yml
-        input_mapping: {input-src: updated-resource-src}
-        output_mapping: {output-src: committed-resource-src}
-        params:
-          GIT_ADD_ARGS: ./config/terraform-version
-          GIT_COMMIT_MSG: ":airplane: Auto-commit: Bumping Terraform CLI version"
-          GIT_COMMIT_USERNAME: friendly-ci
-          GIT_COMMIT_EMAIL: {{git_commit_email}}
-          GIT_SUCCEED_ON_NO_CHANGES: true
-      - put: resource-src
-        params:
-          repository: committed-resource-src/
-          rebase: true
-
   - name: push-dev-image
     serial_groups: [track1, track2]
     plan:
@@ -84,7 +62,7 @@ jobs:
           image_resource: &test-image
             type: docker-image
             source:
-              repository: ljfranklin/terraform-resource
+              repository: cycloid/terraform-resource
               tag: test
           inputs:
             - name: terraform
@@ -216,7 +194,7 @@ jobs:
         trigger: true
       - put: terraform-prod-image
         params:
-          pull_repository: ljfranklin/terraform-resource
+          pull_repository: cycloid/terraform-resource
           pull_tag: test
           cache: true
 
@@ -225,26 +203,20 @@ resource_types:
   type: docker-image
   source:
     # use tag `latest` for stable release
-    repository: ljfranklin/terraform-resource
+    repository: cycloid/terraform-resource
     tag: test
 
 resources:
 - name: resource-src
   type: git
   source:
-    uri: git@github.com:ljfranklin/terraform-resource.git
-    branch: master
+    uri: git@github.com:cycloidio/terraform-resource.git
+    branch: ci
     private_key: {{git_private_key}}
-- name: terraform-github-release
-  type: github-release
-  source:
-    user: hashicorp
-    repository: terraform
-    access_token: {{github_access_token}}
 - name: terraform-dev-image
   type: docker-image
   source:
-    repository: ljfranklin/terraform-resource
+    repository: cycloid/terraform-resource
     tag: dev
     email: {{docker_email}}
     username: {{docker_username}}
@@ -252,7 +224,7 @@ resources:
 - name: terraform-test-image
   type: docker-image
   source:
-    repository: ljfranklin/terraform-resource
+    repository: cycloid/terraform-resource
     tag: test
     email: {{docker_email}}
     username: {{docker_username}}
@@ -260,7 +232,7 @@ resources:
 - name: terraform-prod-image
   type: docker-image
   source:
-    repository: ljfranklin/terraform-resource
+    repository: cycloid/terraform-resource
     tag: latest
     email: {{docker_email}}
     username: {{docker_username}}
@@ -268,7 +240,7 @@ resources:
 - name: locks
   type: pool
   source:
-    uri: git@github.com:ljfranklin/terraform-resource.git
+    uri: git@github.com:cycloidio/terraform-resource.git
     branch: ci-pool-test
     pool: aws-ci-pool
     private_key: {{git_private_key}}
@@ -290,4 +262,4 @@ resources:
   type: terraform
   source:
     <<: *terraform-source
-    terraform_source: github.com/ljfranklin/terraform-resource//fixtures/aws
+    terraform_source: github.com/cycloidio/terraform-resource//fixtures/aws
