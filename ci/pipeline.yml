@@ -22,6 +22,7 @@ jobs:
         params:
           AWS_ACCESS_KEY:           {{ec2_access_key}}
           AWS_SECRET_KEY:           {{ec2_secret_key}}
+          AWS_REGION:               {{aws_region}}
           AWS_BUCKET:               {{storage_bucket}}
           AWS_BUCKET_SUBFOLDER:     terraform-test-unit
           S3_COMPATIBLE_BUCKET:     {{s3_compatible_bucket}}
@@ -251,10 +252,12 @@ resources:
     storage:
       access_key_id:     {{storage_access_key}}
       secret_access_key: {{storage_secret_key}}
+      region_name:       {{aws_region}}
       bucket:            {{storage_bucket}}
       bucket_path:       ci-pipeline
     terraform_source: resource-src/fixtures/aws
     vars:
+      region:      {{aws_region}}
       access_key:  {{ec2_access_key}}
       secret_key:  {{ec2_secret_key}}
       bucket:      {{storage_bucket}}
