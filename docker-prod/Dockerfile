@@ -5,4 +5,4 @@ RUN apk update  \
     && update-ca-certificates
 
 COPY terraform/* /usr/local/bin/
-COPY check in out /opt/resource/
+#COPY check in out /opt/resource/
